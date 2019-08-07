@@ -16,8 +16,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
   LIBYAML_VERSION      = "0.1.7"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION      = "1.15.2"
-  BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
 
@@ -59,7 +57,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def default_config_vars
     instrument "ruby.default_config_vars" do
       vars = {
-        "LANG" => env("LANG") || "en_US.UTF-8"
+        "LANG" => env("LANG") || "en_US.UTF-8",
       }
 
       ruby_version.jruby? ? vars.merge({
@@ -110,8 +108,12 @@ WARNING
       end
       config_detect
       best_practice_warnings
+      cleanup
       super
     end
+  end
+
+  def cleanup
   end
 
   def config_detect
@@ -122,9 +124,9 @@ private
   def warn_bundler_upgrade
     old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
 
-    if old_bundler_version && old_bundler_version != BUNDLER_VERSION
+    if old_bundler_version && old_bundler_version != bundler.version
       puts(<<-WARNING)
-Your app was upgraded to bundler #{ BUNDLER_VERSION }.
+Your app was upgraded to bundler #{ bundler.version }.
 Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
 If you see problems related to the bundler version please refer to:
@@ -300,6 +302,14 @@ SHELL
       ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
       ENV["PATH"] += ":#{yarn_preinstall_bin_path}" if !yarn_not_preinstalled?
 
+      # By default Node can address 1.5GB of memory, a limitation it inherits from
+      # the underlying v8 engine. This can occasionally cause issues during frontend
+      # builds where memory use can exceed this threshold.
+      #
+      # This passes an argument to all Node processes during the build, so that they
+      # can take advantage of all available memory on the build dynos.
+      ENV["NODE_OPTIONS"] ||= "--max_old_space_size=2560"
+
       # TODO when buildpack-env-args rolls out, we can get rid of
       # ||= and the manual setting below
       default_config_vars.each do |key, value|
@@ -380,6 +390,41 @@ WARNING
 
     true
   rescue LanguagePack::Fetcher::FetchError => error
+    if stack == "heroku-18" && ruby_version.version_for_download.match?(/ruby-2\.(2|3)/)
+      message = <<ERROR
+An error occurred while installing #{ruby_version.version_for_download}
+
+This version of Ruby is not available on Heroku-18. The minimum supported version
+of Ruby on the Heroku-18 stack can found at:
+
+  https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+
+ERROR
+
+      ci_message = <<ERROR
+
+If you did not intend to build your app for CI on the Heroku-18 stack
+please set your stack version manually in the `app.json`:
+
+```
+"stack": "heroku-16"
+```
+
+More information about this change in behavior can be found at:
+  https://help.heroku.com/3Y1HEXGJ/why-doesn-t-ruby-2-3-7-work-in-my-ci-tests
+
+ERROR
+
+      if env("CI")
+        mcount "fail.bad_version_fetch.heroku-18.ci"
+        message << ci_message
+      else
+        mcount "fail.bad_version_fetch.heroku-18"
+      end
+
+      error message
+    end
+
     mcount "fail.bad_version_fetch"
     mcount "fail.bad_version_fetch.#{ruby_version.version_for_download}"
     message = <<ERROR
@@ -557,7 +602,7 @@ WARNING
   end
 
   def bundler_path
-    @bundler_path ||= "#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}"
+    @bundler_path ||= "#{slug_vendor_base}/gems/#{bundler.dir_name}"
   end
 
   def write_bundler_shim(path)
@@ -568,7 +613,7 @@ WARNING
 #!/usr/bin/env ruby
 require 'rubygems'
 
-version = "#{BUNDLER_VERSION}"
+version = "#{bundler.version}"
 
 if ARGV.first
   str = ARGV.first
@@ -631,6 +676,7 @@ WARNING
 
         bundler_output = ""
         bundle_time    = nil
+        env_vars = {}
         Dir.mktmpdir("libyaml-") do |tmpdir|
           libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
           install_libyaml(libyaml_dir)
@@ -639,19 +685,18 @@ WARNING
           yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
           yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
           pwd            = Dir.pwd
-          bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
+          bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
+
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
-          env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
-            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
-            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
-            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
-            "RUBYOPT"                       => syck_hack,
-            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true",
-            "BUNDLE_DISABLE_VERSION_CHECK"  => "true"
-          }
+         env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
+          env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
+          env_vars["CPATH"] = noshellescape("#{yaml_include}:$CPATH")
+          env_vars["CPPATH"] = noshellescape("#{yaml_include}:$CPPATH")
+          env_vars["LIBRARY_PATH"] = noshellescape("#{yaml_lib}:$LIBRARY_PATH")
+          env_vars["RUBYOPT"] = syck_hack
+          env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
+          env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
           env_vars["JAVA_HOME"]                    = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
           env_vars["BUNDLER_LIB_PATH"]             = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
           env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
@@ -671,9 +716,9 @@ WARNING
           instrument "ruby.bundle_clean" do
             # Only show bundle clean output when not using default cache
             if load_default_cache?
-              run("#{bundle_bin} clean > /dev/null", user_env: true)
+              run("#{bundle_bin} clean > /dev/null", user_env: true, env: env_vars)
             else
-              pipe("#{bundle_bin} clean", out: "2> /dev/null", user_env: true)
+              pipe("#{bundle_bin} clean", out: "2> /dev/null", user_env: true, env: env_vars)
             end
           end
           @bundler_cache.store
@@ -699,7 +744,15 @@ https://devcenter.heroku.com/articles/sqlite3
             error_message += <<-ERROR
 
 Detected a mismatch between your Ruby version installed and
-Ruby version specified in Gemfile or Gemfile.lock:
+Ruby version specified in Gemfile or Gemfile.lock. You can
+correct this by running:
+
+    $ bundle update --ruby
+    $ git add Gemfile.lock
+    $ git commit -m "update ruby version"
+
+If this does not solve the issue please see this documentation:
+
 https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-your-gemfile-specified-y
             ERROR
           end
@@ -1034,7 +1087,7 @@ params = CGI.parse(uri.query || "")
       FileUtils.mkdir_p(heroku_metadata)
       @metadata.write(ruby_version_cache, full_ruby_version, false)
       @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
-      @metadata.write(bundler_version_cache, BUNDLER_VERSION, false)
+      @metadata.write(bundler_version_cache, bundler.version, false)
       @metadata.write(rubygems_version_cache, rubygems_version, false)
       @metadata.write(stack_cache, @stack, false)
       @metadata.save
