@@ -43,24 +43,3 @@ class LanguagePack::Helpers::Nodebin
     puts '...W       W'
   end
 end
-
-       ____________________
-       __    /  I'm a Dinosaur!  |
-       /oo\  | & This is a Tuitu  |
-       |    | <____  Buildpack Mod |
-       ^^  (vvvv)   ^^ \______________/
-       \\  /\__/\  //
-       \\/      \//
-       /        \
-       |          |    ^
-       /          \___/ |
-       (            )    |
-       \----------/    /
-       //     \\_____/
-       W       W
-
-
-
-
-
-
