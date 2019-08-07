@@ -27,19 +27,40 @@ class LanguagePack::Helpers::Nodebin
   end
 
   def self.hacky_signature
-    puts '              ____________________'
-    puts '       __    /  I\'m a Dinosaur!  |'
-    puts '      /oo\\  | & This is a Tuitu  |'
-    puts '     |    | <____  Buildpack Mod |'
-    puts ' ^^  (vvvv)   ^^ \\______________/'
-    puts ' \\\\  /\__/\  //'
-    puts '  \\\\/      \//'
-    puts '   /        \        '
-    puts '  |          |    ^  '
-    puts '  /          \___/ | '
-    puts ' (            )    |'
-    puts '  \----------/    /'
-    puts '   //     \\\\_____/'
-    puts '   W       W'
+    puts '..............____________________'
+    puts '.......__    /  I\'m a Dinosaur!  |'
+    puts '....../oo\\  | & This is a Tuitu  |'
+    puts '.....|    | <____  Buildpack Mod |'
+    puts '.^^  (vvvv)   ^^ \\______________/'
+    puts '.\\\\  /\__/\  //'
+    puts '..\\\\/      \//'
+    puts '.../        \        '
+    puts '..|          |    ^  '
+    puts '../          \___/ | '
+    puts '.(            )    |'
+    puts '..\----------/    /'
+    puts '...//     \\\\_____/'
+    puts '...W       W'
   end
 end
+
+       ____________________
+       __    /  I'm a Dinosaur!  |
+       /oo\  | & This is a Tuitu  |
+       |    | <____  Buildpack Mod |
+       ^^  (vvvv)   ^^ \______________/
+       \\  /\__/\  //
+       \\/      \//
+       /        \
+       |          |    ^
+       /          \___/ |
+       (            )    |
+       \----------/    /
+       //     \\_____/
+       W       W
+
+
+
+
+
+
