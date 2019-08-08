@@ -4,7 +4,7 @@ class LanguagePack::Helpers::JvmInstaller
   include LanguagePack::ShellHelpers
 
   SYS_PROPS_FILE  = "system.properties"
-  JVM_BUCKET      = "https://lang-jvm.s3.amazonaws.com"
+  JVM_BUCKET      = "https://tuitu-buildpack.oss-cn-hangzhou.aliyuncs.com"
   JVM_BASE_URL    = "#{JVM_BUCKET}/jdk"
   JVM_1_9_PATH    = "openjdk1.9-latest.tar.gz"
   JVM_1_8_PATH    = "openjdk1.8-latest.tar.gz"
