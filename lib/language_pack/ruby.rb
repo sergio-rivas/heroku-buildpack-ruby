@@ -963,7 +963,7 @@ params = CGI.parse(uri.query || "")
 
   def run_assets_precompile_rake_task
     instrument 'ruby.run_assets_precompile_rake_task' do
-      exec "yarn", "config", "set", "registry", "https://registry.npm.taobao.org/"
+      print `yarn config set registry https://registry.npm.taobao.org/`
       precompile = rake.task("assets:precompile")
       return true unless precompile.is_defined?
 
