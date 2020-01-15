@@ -11,6 +11,7 @@ group :development, :test do
   gem "excon"
   gem "rake"
   gem 'i18n'
+  gem 'warden'
   gem "parallel_tests"
   gem 'rspec-retry'
   gem "netrc"
