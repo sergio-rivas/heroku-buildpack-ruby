@@ -11,7 +11,7 @@ def s3_tools_dir
 end
 
 def s3_upload(tmpdir, name)
-  sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name}.tgz #{tmpdir}/#{name}.tgz")
+  # sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name}.tgz #{tmpdir}/#{name}.tgz")
 end
 
 def vendor_plugin(git_url, branch = nil)
@@ -24,7 +24,7 @@ def vendor_plugin(git_url, branch = nil)
       sh "git checkout origin/#{branch}" if branch
       FileUtils.rm_rf("#{name}/.git")
       sh("tar czvf #{tmpdir}/#{name}.tgz *")
-      s3_upload(tmpdir, name)
+      # s3_upload(tmpdir, name)
     end
   end
 end
@@ -51,7 +51,7 @@ def install_gem(gem_name, version)
         sh("rm #{gem_name}-#{version}.gem")
         sh("rm -rf cache/#{gem_name}-#{version}.gem")
         sh("tar czvf #{tmpdir}/#{name}.tgz *")
-        s3_upload(tmpdir, name)
+        # s3_upload(tmpdir, name)
       end
     end
   end
@@ -83,7 +83,7 @@ task "ruby:manifest" do
   Dir.mktmpdir("ruby_versions-") do |tmpdir|
     name = 'ruby_versions.yml'
     File.open(name, 'w') {|file| file.puts(rubies.to_yaml) }
-    sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name} #{name}")
+    # sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name} #{name}")
   end
 end
 

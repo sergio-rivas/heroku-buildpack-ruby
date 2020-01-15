@@ -39,6 +39,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     super(build_path, cache_path)
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
+    @fetchers[:libpq]  = LanguagePack::Fetcher.new("https://tuitu-buildpack.oss-cn-hangzhou.aliyuncs.com/", @stack)
     @node_installer    = LanguagePack::Helpers::NodeInstaller.new
     @yarn_installer    = LanguagePack::Helpers::YarnInstaller.new
     @jvm_installer     = LanguagePack::Helpers::JvmInstaller.new(slug_vendor_jvm, @stack)
@@ -152,7 +153,7 @@ WARNING
     end
 
     Dir.chdir("vendor") do
-      @fetchers[:mri].fetch("libpq5_12.1-1.deb")
+      @fetchers[:libpq].fetch("libpq5_12.1-1.deb")
       run!("dpkg -x libpq5_12.1-1.deb .")
       run!("rm libpq5_12.1-1.deb")
 

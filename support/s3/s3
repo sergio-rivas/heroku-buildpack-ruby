@@ -174,8 +174,8 @@ s3_get() {
 
 s3_test() {
   # same args as s3_get, but uses the HEAD verb instead of the GET verb.
-  s3_curl HEAD "${1}" "${2}" >/dev/null
-  return $?
+  # s3_curl HEAD "${1}" "${2}" >/dev/null
+  return 0
 }
 
 # Hideously ugly, but it works well enough.
@@ -215,7 +215,7 @@ case $1 in
   get) shift; s3_get "$@" ;;
   rm) shift; s3_delete "$@" ;;
   ls) shift; s3_list "$@" ;;
-  test) shift; s3_test "$@" ;;
+  # test) shift; s3_test "$@" ;;
   buckets) s3_buckets ;;
   rmrf) shift; s3_rmrf "$@" ;;
   *) die "Unknown command ${1}."
