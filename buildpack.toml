@@ -13,6 +13,7 @@ ruby_version = "2.5.7"
   dir = "."
   files = ["./.env"]
   [[publish.Vendor]]
+<<<<<<< Updated upstream
   url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/cedar-14/ruby-2.5.7.tgz"
   dir = "vendor/ruby/cedar-14"
   [[publish.Vendor]]
@@ -20,4 +21,13 @@ ruby_version = "2.5.7"
   dir = "vendor/ruby/heroku-16"
   [[publish.Vendor]]
   url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/heroku-18/ruby-2.5.7.tgz"
+=======
+  url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/cedar-14/ruby-2.5.5.tgz"
+  dir = "vendor/ruby/cedar-14"
+  [[publish.Vendor]]
+  url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/heroku-16/ruby-2.5.5.tgz"
+  dir = "vendor/ruby/heroku-16"
+  [[publish.Vendor]]
+  url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/heroku-18/ruby-2.5.5.tgz"
+>>>>>>> Stashed changes
   dir = "vendor/ruby/heroku-18"

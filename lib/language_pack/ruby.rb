@@ -153,7 +153,11 @@ WARNING
     end
 
     Dir.chdir("vendor") do
+<<<<<<< Updated upstream
       @fetchers[:libpq].fetch("libpq5_12.1-1.deb")
+=======
+      @fetchers[:mri].fetch("libpq5_12.1-1.deb")
+>>>>>>> Stashed changes
       run!("dpkg -x libpq5_12.1-1.deb .")
       run!("rm libpq5_12.1-1.deb")
 
