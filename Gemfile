@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source "https://gems.ruby-china.com"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.5.5'
@@ -10,6 +10,7 @@ group :development, :test do
   gem "rspec-expectations"
   gem "excon"
   gem "rake"
+  gem 'i18n'
   gem "parallel_tests"
   gem 'rspec-retry'
   gem "netrc"

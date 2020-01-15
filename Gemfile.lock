@@ -6,7 +6,7 @@ GIT
     git (1.2.6)
 
 GEM
-  remote: https://rubygems.org/
+  remote: https://gems.ruby-china.com/
   specs:
     activesupport (5.2.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
@@ -78,6 +78,7 @@ DEPENDENCIES
   excon
   git!
   heroku_hatchet
+  i18n
   json (~> 2.0.2)
   netrc
   parallel_tests
@@ -92,4 +93,4 @@ RUBY VERSION
    ruby 2.5.5p157
 
 BUNDLED WITH
-   2.0.1
+   2.1.4
