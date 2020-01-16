@@ -80,7 +80,6 @@ DEPENDENCIES
   excon
   git!
   heroku_hatchet
-  i18n
   json (~> 2.0.2)
   netrc
   parallel_tests
