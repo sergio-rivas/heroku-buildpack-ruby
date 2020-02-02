@@ -5,7 +5,7 @@ class LanguagePack::Helpers::Nodebin
     version = "10.15.3"
     {
       "number" => version,
-      "url"    => "https://tuitu-buildpack.oss-cn-hangzhou.aliyuncs.com/node-v#{version}-linux-x64.tar.gz"
+      "url"    => "https://npm.taobao.org/mirrors/node/v#{version}/node-v#{version}-linux-x64.tar.gz"
     }
   end
 
@@ -13,7 +13,7 @@ class LanguagePack::Helpers::Nodebin
     version = "1.16.0"
     {
       "number" => version,
-      "url"    => "https://tuitu-buildpack.oss-cn-hangzhou.aliyuncs.com/yarn-v#{version}.tar.gz"
+      "url"    => "https://registry.npm.taobao.org/yarn/download/yarn-#{version}.tgz"
     }
   end
 
