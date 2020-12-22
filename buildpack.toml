@@ -13,11 +13,11 @@ ruby_version = "2.5.5"
   dir = "."
   files = ["./.env"]
   [[publish.Vendor]]
-  url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/cedar-14/ruby-2.5.5.tgz"
+  url = "https://cache.ruby-china.com/pub/ruby/ruby-2.5.5.tar.gz"
   dir = "vendor/ruby/cedar-14"
   [[publish.Vendor]]
-  url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/heroku-16/ruby-2.5.5.tgz"
+  url = "https://cache.ruby-china.com/pub/ruby/ruby-2.5.5.tar.gz"
   dir = "vendor/ruby/heroku-16"
   [[publish.Vendor]]
-  url = "https://buildpack.tuitu-tech.cn/heroku-buildpack-ruby/heroku-18/ruby-2.5.5.tgz"
+  url = "https://cache.ruby-china.com/pub/ruby/ruby-2.5.5.tar.gz"
   dir = "vendor/ruby/heroku-18"
